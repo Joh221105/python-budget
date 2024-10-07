@@ -1,5 +1,11 @@
 from database import create_connection
 
+def display_menu():
+    print("\n--- Budget Tracker ---")
+    print("1. Add Transaction")
+    print("2. View All Transactions")
+    print("3. Exit")
+
 def main():
     database = "budget_tracker.db"
     conn = create_connection(database)
@@ -9,13 +15,9 @@ def main():
         return
 
 
-# 1 = add
-# 2 = view
-# 3 = exit
-
     while True:
-        # display_menu()
-        choice = input("\nChoose an option (1-3): ")
+        display_menu()
+        choice = input("\nChoose an option (1, 2, or 3): ")
 
         # Placeholder for options
         if choice == '1':
