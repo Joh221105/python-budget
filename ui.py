@@ -1,10 +1,22 @@
 from database import create_connection
+from transactions import add_transaction
 
 def display_menu():
     print("\n--- Budget Tracker ---")
     print("1. Add Transaction")
     print("2. View All Transactions")
     print("3. Exit")
+
+def add_transaction_ui(conn):
+    print("\n--- Add New Transaction ---")
+    type = input("Enter transaction type (income/expense): ").lower()
+    category = input("Enter transaction category (e.g., groceries, rent, etc.): ")
+    amount = float(input("Enter transaction amount: "))
+    date = input("Enter transaction date (YYYY-MM-DD): ")
+
+    transaction = (type, category, amount, date)
+    transaction_id = add_transaction(conn, transaction)
+    print(f"\nTransaction added with ID: {transaction_id}")
 
 def main():
     database = "budget_tracker.db"
