@@ -33,7 +33,7 @@ def main():
 
         # Placeholder for options
         if choice == '1':
-            pass
+            add_transaction_ui(conn)
         elif choice == '2':
             pass
         elif choice == '3':
