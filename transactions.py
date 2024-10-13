@@ -16,3 +16,9 @@ def add_transaction(conn, transaction):
     cur.execute(sql, transaction)
     conn.commit()
     return cur.lastrowid
+
+def filter_transactions_by_type(conn, transaction_type):
+    cur = conn.cursor()
+    sql = '''SELECT * FROM transactions WHERE type = ?'''
+    cur.execute(sql, (transaction_type,))
+    return cur.fetchall()
