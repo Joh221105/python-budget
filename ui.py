@@ -1,5 +1,5 @@
 from database import create_connection, create_table
-from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id, update_transaction
+from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id, update_transaction, get_transaction_by_id
 
 def display_menu():
     print("\n--- Budget Tracker ---")
@@ -82,13 +82,23 @@ def edit_transaction_ui(conn):
     print("\n--- Edit Transaction ---")
     transaction_id = int(input("Enter the transaction ID to edit: "))
 
-    # gathers the fields to be updated and their new values
-    new_type = input("Enter new transaction type (income/expense): ").lower()
-    new_category = input("Enter new transaction category (e.g., groceries, rent, etc.): ")
-    new_amount = float(input("Enter new transaction amount: "))
-    new_date = input("Enter new transaction date (YYYY-MM-DD): ")
+    # fetch a specific transaction by id
+    transaction = get_transaction_by_id(conn, transaction_id)
+    if not transaction:
+        print(f"No transaction found with ID {transaction_id}.")
+        return
 
-    # creates tuple of updated values
+    # displays selected transaction details to the user
+    print(f"Current transaction details: {transaction}")
+    
+    # asks user for new values (keep old value by pressing Enter)
+    new_type = input(f"Enter new transaction type (income/expense) [{transaction[1]}]: ").lower() or transaction[1]
+    new_category = input(f"Enter new transaction category [{transaction[2]}]: ") or transaction[2]
+    new_amount = input(f"Enter new transaction amount [{transaction[3]}]: ")
+    new_amount = float(new_amount) if new_amount else transaction[3]
+    new_date = input(f"Enter new transaction date (YYYY-MM-DD) [{transaction[4]}]: ") or transaction[4]
+
+    # creates tuple with updated values
     updated_transaction = (new_type, new_category, new_amount, new_date)
     
     success = update_transaction(conn, transaction_id, updated_transaction)
