@@ -28,3 +28,12 @@ def filter_transactions_by_date_range(conn, start_date, end_date):
     sql = '''SELECT * FROM transactions WHERE date BETWEEN ? AND ?'''
     cur.execute(sql, (start_date, end_date))
     return cur.fetchall()
+
+def delete_transaction_by_id(conn, transaction_id):
+    sql = '''DELETE FROM transactions WHERE id = ?'''
+    cur = conn.cursor()
+    cur.execute(sql, (transaction_id,))
+    conn.commit()
+    if cur.rowcount == 0:
+        return False  # no transaction found with provided id
+    return True 
