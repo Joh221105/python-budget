@@ -50,3 +50,11 @@ def update_transaction(conn, transaction_id, updated_transaction):
     if cur.rowcount == 0:
         return False  
     return True  
+
+def get_transaction_by_id(conn, transaction_id):
+    sql = '''SELECT * FROM transactions WHERE id = ?'''
+    cur = conn.cursor()
+    cur.execute(sql, (transaction_id,))
+    transaction = cur.fetchone()  # fetch one result
+
+    return transaction  # Will return None if the ID doesn't exist
