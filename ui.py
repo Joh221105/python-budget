@@ -1,5 +1,5 @@
 from database import create_connection, create_table
-from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range
+from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id
 
 def display_menu():
     print("\n--- Budget Tracker ---")
@@ -7,7 +7,8 @@ def display_menu():
     print("2. View All Transactions")
     print("3. Filter Transactions by Type (income/expense)")
     print("4. Filter Transactions by Date Range")
-    print("5. Exit")
+    print("5. Delete Transaction")
+    print("6. Exit")
 
 def add_transaction_ui(conn):
     print("\n--- Add New Transaction ---")
@@ -64,6 +65,17 @@ def filter_transactions_by_date_range_ui(conn):
             print(f"ID: {transaction[0]}, Type: {transaction[1]}, Category: {transaction[2]}, Amount: {transaction[3]}, Date: {transaction[4]}")
     else:
         print(f"No transactions found between {start_date} and {end_date}")
+
+def delete_transaction_ui(conn):
+    print("\n--- Delete Transaction ---")
+    transaction_id = int(input("Enter the transaction ID to delete: "))
+
+    success = delete_transaction_by_id(conn, transaction_id)
+
+    if success:
+        print(f"Transaction with ID {transaction_id} was deleted successfully.")
+    else:
+        print(f"No transaction found with ID {transaction_id}.")
 
 def main():
     database = "budget_tracker.db"
