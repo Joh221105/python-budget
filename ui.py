@@ -8,7 +8,8 @@ def display_menu():
     print("3. Filter Transactions by Type (income/expense)")
     print("4. Filter Transactions by Date Range")
     print("5. Delete Transaction")
-    print("6. Exit")
+    print("6. Edit Transaction")
+    print("7. Exit")
 
 def add_transaction_ui(conn):
     print("\n--- Add New Transaction ---")
@@ -109,7 +110,7 @@ def main():
 
     while True:
         display_menu()
-        choice = input("\nChoose an option (1, 2, 3, 4, 5, or 6): ")
+        choice = input("\nChoose an option (1, 2, 3, 4, 5, 6, or 7): ")
 
         if choice == '1':
             add_transaction_ui(conn)
@@ -122,8 +123,12 @@ def main():
         elif choice == '5':
             delete_transaction_ui(conn)
         elif choice == '6':
+            edit_transaction_ui(conn)
+        elif choice == '7':
             print("\nExiting the application.")
             break
+        else:
+            print("\nInvalid option. Please choose again.")
 
 if __name__ == "__main__":
     main()
