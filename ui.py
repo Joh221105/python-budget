@@ -1,5 +1,5 @@
 from database import create_connection, create_table
-from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id
+from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id, update_transaction
 
 def display_menu():
     print("\n--- Budget Tracker ---")
@@ -74,6 +74,26 @@ def delete_transaction_ui(conn):
 
     if success:
         print(f"Transaction with ID {transaction_id} was deleted successfully.")
+    else:
+        print(f"No transaction found with ID {transaction_id}.")
+
+def edit_transaction_ui(conn):
+    print("\n--- Edit Transaction ---")
+    transaction_id = int(input("Enter the transaction ID to edit: "))
+
+    # gathers the fields to be updated and their new values
+    new_type = input("Enter new transaction type (income/expense): ").lower()
+    new_category = input("Enter new transaction category (e.g., groceries, rent, etc.): ")
+    new_amount = float(input("Enter new transaction amount: "))
+    new_date = input("Enter new transaction date (YYYY-MM-DD): ")
+
+    # creates tuple of updated values
+    updated_transaction = (new_type, new_category, new_amount, new_date)
+    
+    success = update_transaction(conn, transaction_id, updated_transaction)
+
+    if success:
+        print(f"Transaction with ID {transaction_id} was updated successfully.")
     else:
         print(f"No transaction found with ID {transaction_id}.")
 
