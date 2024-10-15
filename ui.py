@@ -1,5 +1,5 @@
 from database import create_connection, create_table
-from transactions import add_transaction, get_transactions, filter_transactions_by_type
+from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range
 
 def display_menu():
     print("\n--- Budget Tracker ---")
@@ -50,6 +50,20 @@ def filter_transactions_ui(conn):
             print(f"ID: {transaction[0]}, Type: {transaction[1]}, Category: {transaction[2]}, Amount: {transaction[3]}, Date: {transaction[4]}")
     else:
         print(f"No transactions found for type: {transaction_type}")
+
+def filter_transactions_by_date_range_ui(conn):
+    print("\n--- Filter Transactions by Date Range ---")
+    start_date = input("Enter start date (YYYY-MM-DD): ")
+    end_date = input("Enter end date (YYYY-MM-DD): ")
+
+    filtered_transactions = filter_transactions_by_date_range(conn, start_date, end_date)
+
+    if filtered_transactions:
+        print("\n--- Filtered Transactions ---")
+        for transaction in filtered_transactions:
+            print(f"ID: {transaction[0]}, Type: {transaction[1]}, Category: {transaction[2]}, Amount: {transaction[3]}, Date: {transaction[4]}")
+    else:
+        print(f"No transactions found between {start_date} and {end_date}")
 
 def main():
     database = "budget_tracker.db"
