@@ -89,7 +89,7 @@ def main():
 
     while True:
         display_menu()
-        choice = input("\nChoose an option (1, 2, 3, 4, or 5): ")
+        choice = input("\nChoose an option (1, 2, 3, 4, 5, or 6): ")
 
         if choice == '1':
             add_transaction_ui(conn)
@@ -100,10 +100,10 @@ def main():
         elif choice == '4':
             filter_transactions_by_date_range_ui(conn)
         elif choice == '5':
+            delete_transaction_ui(conn)
+        elif choice == '6':
             print("\nExiting the application.")
             break
-        else:
-            print("\nInvalid option. Please choose again.")
 
 if __name__ == "__main__":
     main()
