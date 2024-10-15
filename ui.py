@@ -6,7 +6,8 @@ def display_menu():
     print("1. Add Transaction")
     print("2. View All Transactions")
     print("3. Filter Transactions by Type (income/expense)")
-    print("4. Exit")
+    print("4. Filter Transactions by Date Range")
+    print("5. Exit")
 
 def add_transaction_ui(conn):
     print("\n--- Add New Transaction ---")

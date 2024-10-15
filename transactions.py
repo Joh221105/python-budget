@@ -22,3 +22,9 @@ def filter_transactions_by_type(conn, transaction_type):
     sql = '''SELECT * FROM transactions WHERE type = ?'''
     cur.execute(sql, (transaction_type,))
     return cur.fetchall()
+
+def filter_transactions_by_date_range(conn, start_date, end_date):
+    cur = conn.cursor()
+    sql = '''SELECT * FROM transactions WHERE date BETWEEN ? AND ?'''
+    cur.execute(sql, (start_date, end_date))
+    return cur.fetchall()
