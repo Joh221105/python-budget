@@ -90,6 +90,8 @@ def edit_transaction_ui(conn):
 
     # displays selected transaction details to the user
     print(f"Current transaction details: {transaction}")
+
+    print("\nPress Enter to keep the current value for each field.")
     
     # asks user for new values (keep old value by pressing Enter)
     new_type = input(f"Enter new transaction type (income/expense) [{transaction[1]}]: ").lower() or transaction[1]
