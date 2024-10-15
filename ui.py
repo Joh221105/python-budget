@@ -1,5 +1,5 @@
 from database import create_connection, create_table
-from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id
+from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id, update_transaction, get_transaction_by_id
 
 def display_menu():
     print("\n--- Budget Tracker ---")
@@ -8,7 +8,8 @@ def display_menu():
     print("3. Filter Transactions by Type (income/expense)")
     print("4. Filter Transactions by Date Range")
     print("5. Delete Transaction")
-    print("6. Exit")
+    print("6. Edit Transaction")
+    print("7. Exit")
 
 def add_transaction_ui(conn):
     print("\n--- Add New Transaction ---")
@@ -77,6 +78,38 @@ def delete_transaction_ui(conn):
     else:
         print(f"No transaction found with ID {transaction_id}.")
 
+def edit_transaction_ui(conn):
+    print("\n--- Edit Transaction ---")
+    transaction_id = int(input("Enter the transaction ID to edit: "))
+
+    # fetch a specific transaction by id
+    transaction = get_transaction_by_id(conn, transaction_id)
+    if not transaction:
+        print(f"No transaction found with ID {transaction_id}.")
+        return
+
+    # displays selected transaction details to the user
+    print(f"Current transaction details: {transaction}")
+
+    print("\nPress Enter to keep the current value for each field.")
+    
+    # asks user for new values (keep old value by pressing Enter)
+    new_type = input(f"Enter new transaction type (income/expense) [{transaction[1]}]: ").lower() or transaction[1]
+    new_category = input(f"Enter new transaction category [{transaction[2]}]: ") or transaction[2]
+    new_amount = input(f"Enter new transaction amount [{transaction[3]}]: ")
+    new_amount = float(new_amount) if new_amount else transaction[3]
+    new_date = input(f"Enter new transaction date (YYYY-MM-DD) [{transaction[4]}]: ") or transaction[4]
+
+    # creates tuple with updated values
+    updated_transaction = (new_type, new_category, new_amount, new_date)
+    
+    success = update_transaction(conn, transaction_id, updated_transaction)
+
+    if success:
+        print(f"Transaction with ID {transaction_id} was updated successfully.")
+    else:
+        print(f"No transaction found with ID {transaction_id}.")
+
 def main():
     database = "budget_tracker.db"
     conn = create_connection(database)
@@ -89,7 +122,7 @@ def main():
 
     while True:
         display_menu()
-        choice = input("\nChoose an option (1, 2, 3, 4, 5, or 6): ")
+        choice = input("\nChoose an option (1, 2, 3, 4, 5, 6, or 7): ")
 
         if choice == '1':
             add_transaction_ui(conn)
@@ -102,8 +135,12 @@ def main():
         elif choice == '5':
             delete_transaction_ui(conn)
         elif choice == '6':
+            edit_transaction_ui(conn)
+        elif choice == '7':
             print("\nExiting the application.")
             break
+        else:
+            print("\nInvalid option. Please choose again.")
 
 if __name__ == "__main__":
     main()
