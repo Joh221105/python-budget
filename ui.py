@@ -72,12 +72,12 @@ def main():
     if conn is None:
         print("Error! Unable to connect to the database.")
         return
-
+    
     create_table(conn)
 
     while True:
         display_menu()
-        choice = input("\nChoose an option (1, 2, 3, or 4): ")
+        choice = input("\nChoose an option (1, 2, 3, 4, or 5): ")
 
         if choice == '1':
             add_transaction_ui(conn)
@@ -85,7 +85,9 @@ def main():
             view_transactions_ui(conn)
         elif choice == '3':
             filter_transactions_ui(conn)
-        elif choice == '4': 
+        elif choice == '4':
+            filter_transactions_by_date_range_ui(conn)
+        elif choice == '5':
             print("\nExiting the application.")
             break
         else:
