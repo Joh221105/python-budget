@@ -1,4 +1,5 @@
 from database import create_connection
+import csv
 
 
 # retrieves all added transactions from transactions table
@@ -57,4 +58,17 @@ def get_transaction_by_id(conn, transaction_id):
     cur.execute(sql, (transaction_id,))
     transaction = cur.fetchone()  # fetch one result
 
-    return transaction  # Will return None if the ID doesn't exist
+    return transaction    # Will return None if the ID doesn't exist
+
+def export_to_csv(conn, filename):
+    transactions = get_transactions(conn)    # retrieves all transactions
+
+    with open(filename, mode='w', newline='') as file:
+        writer = csv.writer(file)
+    
+        writer.writerow(['ID', 'Type', 'Category', 'Amount', 'Date'])    # write the header
+        
+        for transaction in transactions:    # write the transaction data
+            writer.writerow(transaction)
+
+    print(f"Transactions exported to {filename} successfully.")

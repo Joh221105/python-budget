@@ -1,5 +1,5 @@
 from database import create_connection, create_table
-from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id, update_transaction, get_transaction_by_id
+from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id, update_transaction, get_transaction_by_id, export_to_csv
 
 def display_menu():
     print("\n--- Budget Tracker ---")
@@ -9,7 +9,8 @@ def display_menu():
     print("4. Filter Transactions by Date Range")
     print("5. Delete Transaction")
     print("6. Edit Transaction")
-    print("7. Exit")
+    print("7. Export Transactions to CSV")
+    print("8. Exit")
 
 def add_transaction_ui(conn):
     print("\n--- Add New Transaction ---")
@@ -110,6 +111,11 @@ def edit_transaction_ui(conn):
     else:
         print(f"No transaction found with ID {transaction_id}.")
 
+def export_transactions_ui(conn):
+    print("\n--- Export Transactions to CSV ---")
+    filename = input("Enter the filename (e.g., transactions.csv): ")
+    export_to_csv(conn, filename)
+
 def main():
     database = "budget_tracker.db"
     conn = create_connection(database)
@@ -122,7 +128,7 @@ def main():
 
     while True:
         display_menu()
-        choice = input("\nChoose an option (1, 2, 3, 4, 5, 6, or 7): ")
+        choice = input("\nChoose an option (1, 2, 3, 4, 5, 6, 7, or 8): ")
 
         if choice == '1':
             add_transaction_ui(conn)
@@ -137,6 +143,8 @@ def main():
         elif choice == '6':
             edit_transaction_ui(conn)
         elif choice == '7':
+            export_transactions_ui(conn)
+        elif choice == '8':
             print("\nExiting the application.")
             break
         else:
