@@ -301,10 +301,53 @@ class BudgetTrackerApp(QMainWindow):
             QMessageBox.information(self, "Success", f"Transaction with ID {transaction_id} has been deleted.")
         else:
             QMessageBox.warning(self, "Failure", f"No transaction found with ID {transaction_id}.")
-            
+
 # --------------------------------------- EDIT TRANSACTION BY ID ------------------------------------------------
     def edit_transaction_ui(self):
-        QMessageBox.information(self, "Edit Transaction", "Placeholder")
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Edit Transaction")
+
+        # creates label and input fields for each column
+        transaction_id_label = QLabel("Enter Transaction ID to Edit:")
+        transaction_id_input = QLineEdit()
+
+        # Create input fields for new transaction values
+        type_label = QLabel("Type (income/expense):")
+        type_input = QLineEdit()
+
+        category_label = QLabel("Category:")
+        category_input = QLineEdit()
+
+        amount_label = QLabel("Amount:")
+        amount_input = QLineEdit()
+
+        date_label = QLabel("Date (YYYY-MM-DD):")
+        date_input = QLineEdit()
+
+        notes_label = QLabel("Notes:")
+        notes_input = QLineEdit()
+
+        submit_button = QPushButton("Update")
+
+        # display loyout
+        layout = QFormLayout()
+        layout.addRow(transaction_id_label, transaction_id_input)
+        layout.addRow(type_label, type_input)
+        layout.addRow(category_label, category_input)
+        layout.addRow(amount_label, amount_input)
+        layout.addRow(date_label, date_input)
+        layout.addRow(notes_label, notes_input)
+        layout.addWidget(submit_button)
+
+        dialog.setLayout(layout)
+
+        # connects submit button to update function
+        submit_button.clicked.connect(lambda: self.update_transaction(transaction_id_input.text(), type_input.text(), category_input.text(), amount_input.text(), date_input.text(), notes_input.text(), dialog))
+
+        dialog.exec_()
+
+        def update_transaction(self, transaction_id_str, transaction_type, category, amount_str, date, notes, parent_dialog):
+            pass
 
 # --------------------------------------- EXPORT TRANSACTIONS TO CSV ---------------------------------------------
     def export_transactions_ui(self):
