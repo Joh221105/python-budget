@@ -35,7 +35,7 @@ class BudgetTrackerApp(QMainWindow):
         self.add_transaction_button.clicked.connect(self.add_transaction_ui)
         self.view_transactions_button.clicked.connect(self.view_transactions_ui)
         self.filter_by_type_button.clicked.connect(self.filter_transactions_ui)
-        self.filter_by_date_button.clicked.connect(self.filter_transactions_by_date_range_ui)
+        self.filter_by_date_button.clicked.connect(self.show_date_range_input)
         self.delete_transaction_button.clicked.connect(self.delete_transaction_ui)
         self.edit_transaction_button.clicked.connect(self.edit_transaction_ui)
         self.export_button.clicked.connect(self.export_transactions_ui)
@@ -184,8 +184,37 @@ class BudgetTrackerApp(QMainWindow):
 
 # --------------------------FILTER TRANSACTIONS BY DATE RANGE -------------------------------------
 
-    def filter_transactions_by_date_range_ui(self):
-        QMessageBox.information(self, "Filter Transactions by Date Range", "Placeholder")
+    def show_date_range_input(self):
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Filter Transactions by Date Range")
+
+        # user adds start date and end date fields 
+        start_date_label = QLabel("Start Date (YYYY-MM-DD):")
+        self.start_date_input = QLineEdit()
+        
+        end_date_label = QLabel("End Date (YYYY-MM-DD):")
+        self.end_date_input = QLineEdit()
+
+        # adds submit button
+        submit_button = QPushButton("Submit")
+
+        # layout for date inputs and submit button
+        layout = QFormLayout()
+        layout.addRow(start_date_label, self.start_date_input)
+        layout.addRow(end_date_label, self.end_date_input)
+        layout.addWidget(submit_button)
+
+        dialog.setLayout(layout)
+
+        # connects the submit button to function that fetches filtered transactions, passes start and end date and dialog
+        submit_button.clicked.connect(lambda: self.show_filtered_transactions_by_date(self.start_date_input.text(), self.end_date_input.text(), dialog))
+
+        dialog.exec_()
+    
+    def show_filtered_transactions_by_date(self, start_date, end_date, parent_dialog):
+        print(start_date)
+        print(end_date)
 
     def delete_transaction_ui(self):
         QMessageBox.information(self, "Delete Transaction", "Placeholder")
