@@ -18,12 +18,13 @@ def display_menu():
 
 def add_transaction_ui(conn):
     print("\n--- Add New Transaction ---")
-    type = input("Enter transaction type (income/expense): ").lower()
+    transaction_type = input("Enter transaction type (income/expense): ").lower()
     category = input("Enter transaction category (e.g., groceries, rent, etc.): ")
     amount = float(input("Enter transaction amount: "))
     date = input("Enter transaction date (YYYY-MM-DD): ")
+    notes = input("Enter any note for this transaction (Optional): ")
 
-    transaction = (type, category, amount, date)
+    transaction = (transaction_type, category, amount, date, notes)
     transaction_id = add_transaction(conn, transaction)
     print(f"\nTransaction added with ID: {transaction_id}")
 
@@ -37,7 +38,7 @@ def view_transactions_ui(conn):
     
     # displays the transactions
     for t in transactions:
-        print(f"ID: {t[0]}, Type: {t[1]}, Category: {t[2]}, Amount: {t[3]}, Date: {t[4]}")
+        print(f"ID: {t[0]}, Type: {t[1]}, Category: {t[2]}, Amount: {t[3]}, Date: {t[4]}, Notes: {t[5]}")
 
 def filter_transactions_ui(conn):
     print("\n--- Filter Transactions by Type ---")
@@ -104,9 +105,10 @@ def edit_transaction_ui(conn):
     new_amount = input(f"Enter new transaction amount [{transaction[3]}]: ")
     new_amount = float(new_amount) if new_amount else transaction[3]
     new_date = input(f"Enter new transaction date (YYYY-MM-DD) [{transaction[4]}]: ") or transaction[4]
+    new_notes = input(f"Enter new notes for this transaction [{transaction[5]}]: ") or transaction[5]
 
     # creates tuple with updated values
-    updated_transaction = (new_type, new_category, new_amount, new_date)
+    updated_transaction = (new_type, new_category, new_amount, new_date, new_notes)
     
     success = update_transaction(conn, transaction_id, updated_transaction)
 

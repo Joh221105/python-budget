@@ -11,7 +11,8 @@ def create_table(conn):
                      type TEXT NOT NULL,
                      category TEXT NOT NULL,
                      amount REAL NOT NULL,
-                     date TEXT NOT NULL
+                     date TEXT NOT NULL,
+                     notes TEXT 
                  );'''
         conn.execute(sql)
         conn.commit()
