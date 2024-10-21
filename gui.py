@@ -307,6 +307,9 @@ class BudgetTrackerApp(QMainWindow):
         dialog = QDialog(self)
         dialog.setWindowTitle("Edit Transaction")
 
+        instruction_label = QLabel("Blank = Remain Same")
+        instruction_label.setStyleSheet("font-weight: bold; font-size: 12px;")
+
         # creates label and input fields for each column
         transaction_id_label = QLabel("Enter Transaction ID to Edit:")
         transaction_id_input = QLineEdit()
@@ -331,6 +334,7 @@ class BudgetTrackerApp(QMainWindow):
 
         # display loyout
         layout = QFormLayout()
+        layout.addWidget(instruction_label)
         layout.addRow(transaction_id_label, transaction_id_input)
         layout.addRow(type_label, type_input)
         layout.addRow(category_label, category_input)
