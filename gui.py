@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit, QTableWidget, QTableWidgetItem, QLabel
 from database import create_connection, create_table
+from datetime import datetime
 from transactions import (
     add_transaction,
     get_transactions,
@@ -213,15 +214,89 @@ class BudgetTrackerApp(QMainWindow):
         dialog.exec_()
     
     def show_filtered_transactions_by_date(self, start_date, end_date, parent_dialog):
-        print(start_date)
-        print(end_date)
 
+        # close the input dialog / parent dialog
+        parent_dialog.close()
+
+        # validate date formats
+        try:
+            start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+            
+            if start_date_obj > end_date_obj:
+                QMessageBox.warning(self, "Invalid Date Range", "Start date cannot be later than end date.")
+                return
+
+        except ValueError:
+            # shows warning if the date format is incorrect
+            QMessageBox.warning(self, "Invalid Date Format", "Please enter dates in YYYY-MM-DD format.")
+            return
+
+        # fetches the filtered transactions from the database
+        transactions = filter_transactions_by_date_range(self.conn, start_date, end_date)
+
+        # displays the filtered transactions in table
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Filtered Transactions from {start_date} to {end_date}")
+
+        dialog.resize(800, 400)
+
+        # creates table to display filtered results
+        table = QTableWidget(dialog)
+        table.setColumnCount(6)
+        table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
+        table.setRowCount(len(transactions))
+
+        for row, transaction in enumerate(transactions):
+            for column, value in enumerate(transaction):
+                table.setItem(row, column, QTableWidgetItem(str(value)))
+
+        table.setColumnWidth(5, 400)
+
+        layout = QVBoxLayout()
+        layout.addWidget(table)
+        dialog.setLayout(layout)
+
+        dialog.exec_()
+
+# ---
+# dialog = QDialog(self)
+#         dialog.setWindowTitle(f"Filtered Transactions - {transaction_type.capitalize()}")
+
+#         dialog.resize(800, 400)
+
+#         # creates table to display transactions
+#         table = QTableWidget(dialog)
+#         table.setColumnCount(6) 
+#         table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
+#         table.setRowCount(len(filtered_transactions))
+
+#         # populates table with filtered results
+#         for row, transaction in enumerate(filtered_transactions):
+#             for column, value in enumerate(transaction):
+#                 table.setItem(row, column, QTableWidgetItem(str(value)))
+
+#         # sets notes column width
+#         table.setColumnWidth(5, 400)
+
+#         layout = QVBoxLayout()
+#         layout.addWidget(table)
+#         dialog.setLayout(layout)
+
+#         dialog.exec_()
+
+            
+
+# --------------------------------------- DELETE TRANSACTION BY ID --------------------------------------------
     def delete_transaction_ui(self):
         QMessageBox.information(self, "Delete Transaction", "Placeholder")
 
+# --------------------------------------- EDIT TRANSACTION BY ID ------------------------------------------------
     def edit_transaction_ui(self):
         QMessageBox.information(self, "Edit Transaction", "Placeholder")
 
+# --------------------------------------- EXPORT TRANSACTIONS TO CSV ---------------------------------------------
     def export_transactions_ui(self):
         QMessageBox.information(self, "Export Transactions", "Placeholder")
 
