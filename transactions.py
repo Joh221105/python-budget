@@ -11,8 +11,8 @@ def get_transactions(conn):
 # adds transaction as a tuple to transactions table in database
 
 def add_transaction(conn, transaction):
-    sql = '''INSERT INTO transactions(type, category, amount, date)
-              VALUES(?, ?, ?, ?)'''
+    sql = '''INSERT INTO transactions(type, category, amount, date, notes)
+              VALUES(?, ?, ?, ?, ?)'''
     cur = conn.cursor()
     cur.execute(sql, transaction)
     conn.commit()
@@ -41,7 +41,7 @@ def delete_transaction_by_id(conn, transaction_id):
 
 def update_transaction(conn, transaction_id, updated_transaction):
     sql = '''UPDATE transactions
-             SET type = ?, category = ?, amount = ?, date = ?
+             SET type = ?, category = ?, amount = ?, date = ?, notes = ?
              WHERE id = ?'''
     
     cur = conn.cursor()
