@@ -125,11 +125,12 @@ def summary_statistics_ui(conn):
     start_date = input("Enter start date (YYYY-MM-DD): ")
     end_date = input("Enter end date (YYYY-MM-DD): ")
     
-    total_income, total_expenses = summarize_transactions(conn, start_date, end_date)
+    total_income, total_expenses, net_balance= summarize_transactions(conn, start_date, end_date)
 
     print(f"\nSummary from {start_date} to {end_date}:")
     print(f"Total Income: ${total_income:.2f}")
     print(f"Total Expenses: ${total_expenses:.2f}")
+    print(f"Net Balance: ${net_balance:.2f}")
 
 def main():
     database = "budget_tracker.db"

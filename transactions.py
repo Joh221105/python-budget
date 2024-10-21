@@ -85,4 +85,6 @@ def summarize_transactions(conn, start_date, end_date):
     cur.execute("SELECT SUM(amount) FROM transactions WHERE type = 'expense' AND date BETWEEN ? AND ?", (start_date, end_date))
     total_expenses = cur.fetchone()[0] or 0
 
-    return total_income, total_expenses
+    net_balance= total_income - total_expenses
+
+    return total_income, total_expenses, net_balance
