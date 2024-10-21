@@ -98,11 +98,13 @@ class BudgetTrackerApp(QMainWindow):
 
         dialog = QDialog(self)
         dialog.setWindowTitle("All Transactions")
+
+        dialog.setGeometry(100, 100, 1000, 500) # sets initial size of transactions table
         
         table = QTableWidget(dialog)
         table.setColumnCount(6)  #  designates number of columns
         table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"]) # column names
-        table.setColumnWidth(5, 300) # sets the 6th column - Notes to be 300 pixels
+        table.setColumnWidth(5, 400) # sets the 6th column - Notes to be 400 pixels
         
         # set the number of rows in the table to number of transactions
         table.setRowCount(len(transactions))
