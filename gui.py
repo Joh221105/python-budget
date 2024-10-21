@@ -89,7 +89,7 @@ class BudgetTrackerApp(QMainWindow):
     def submit_add_transaction(self, transaction_type, category, amount, date, notes, dialog):
         transaction = (transaction_type, category, amount, date, notes)
         transaction_id = add_transaction(self.conn, transaction)
-        QMessageBox.information(self, "Transaction Added!", f"Transaction ID: {transaction_id}")
+        QMessageBox.information(self, "Transaction Added!", f"Transaction Added. Transaction ID: {transaction_id}")
         dialog.accept()
 
 # ---------------------------------------- VIEW TRANSACTIONS -------------------------------------------
@@ -346,16 +346,54 @@ class BudgetTrackerApp(QMainWindow):
         dialog.setLayout(layout)
 
         # connects submit button to update function
-        submit_button.clicked.connect(lambda: self.update_transaction(transaction_id_input.text(), type_input.text(), category_input.text(), amount_input.text(), date_input.text(), notes_input.text(), dialog))
+        submit_button.clicked.connect(lambda: self.update_transaction_by_id(transaction_id_input.text(), type_input.text(), category_input.text(), amount_input.text(), date_input.text(), notes_input.text(), dialog))
 
         dialog.exec_()
 
-        def update_transaction(self, transaction_id_str, transaction_type, category, amount_str, date, notes, parent_dialog):
-            pass
+    def update_transaction_by_id(self, transaction_id_str, transaction_type, category, amount_str, date, notes, parent_dialog):
+    
+        # validates user id
+        try:
+            transaction_id = int(transaction_id_str)
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Input", "Please enter a valid transaction ID.")
+            return
+        
+        # gets the transaction with associated id
+        current_transaction = get_transaction_by_id(self.conn, transaction_id)    
+        if not current_transaction:
+            QMessageBox.warning(self, "Transaction Not Found", f"No transaction found with ID {transaction_id}.")
+            return    
+
+        # validates amount 
+        amount = float(amount_str) if amount_str else current_transaction[3]
+
+        # creates a tuple with updated values (using previous/existing values if input is empty)
+        updated_transaction = (
+            transaction_type or current_transaction[1], 
+            category or current_transaction[2],            
+            amount,                                        
+            date or current_transaction[4],                
+            notes or current_transaction[5]                
+        )    
+
+        # calls function in transactions.py to update transaction
+        success = update_transaction(self.conn, transaction_id, updated_transaction)
+
+        parent_dialog.close()
+
+        # shows success or failure message
+        if success:
+            QMessageBox.information(self, "Success", f"Transaction with ID {transaction_id} has been updated.")
+        else:
+            QMessageBox.warning(self, "Failure", f"Failed to update transaction with ID {transaction_id}.")
 
 # --------------------------------------- EXPORT TRANSACTIONS TO CSV ---------------------------------------------
     def export_transactions_ui(self):
         QMessageBox.information(self, "Export Transactions", "Placeholder")
+
+
+# --------------------------------------- SUMMARIZE TRANSACTIONS -------------------------------------------
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
