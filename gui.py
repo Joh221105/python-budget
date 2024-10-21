@@ -283,8 +283,25 @@ class BudgetTrackerApp(QMainWindow):
 
         dialog.exec_()
 
-    def delete_transaction(id, parent_dialog):
+    def delete_transaction(self, id, parent_dialog):
+        # validates id input
+        try:
+            transaction_id = int(id)  # converts id to integer
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Input", "Please enter a valid transaction ID.")
+            return
+
+        # calls function to delete transaction by id, returns bool
+        success = delete_transaction_by_id(self.conn, transaction_id)
+
         parent_dialog.close()
+
+        # shows success or failure message
+        if success:
+            QMessageBox.information(self, "Success", f"Transaction with ID {transaction_id} has been deleted.")
+        else:
+            QMessageBox.warning(self, "Failure", f"No transaction found with ID {transaction_id}.")
+            
 # --------------------------------------- EDIT TRANSACTION BY ID ------------------------------------------------
     def edit_transaction_ui(self):
         QMessageBox.information(self, "Edit Transaction", "Placeholder")
