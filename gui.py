@@ -56,6 +56,8 @@ class BudgetTrackerApp(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
+#--------------------------------------------- ADD AND SUBMIT TRANSACTIONS ----------------------------------
+
     def add_transaction_ui(self):
         dialog = QDialog(self)
         dialog.setWindowTitle("Add Transaction")
@@ -89,8 +91,20 @@ class BudgetTrackerApp(QMainWindow):
         QMessageBox.information(self, "Transaction Added!", f"Transaction ID: {transaction_id}")
         dialog.accept()
 
+# ---------------------------------------- VIEW TRANSACTIONS -------------------------------------------
+
     def view_transactions_ui(self):
-        QMessageBox.information(self, "View Transactions", "Placeholder")
+        transactions = get_transactions(self.conn)  
+
+        if not transactions:
+            QMessageBox.information(self, "View Transactions", "No transactions found.")
+            return
+
+        # formatted string display of transactions
+        transaction_list = "\n".join([f"ID: {t[0]}, Type: {t[1]}, Category: {t[2]}, Amount: {t[3]}, Date: {t[4]}, Notes: {t[5]}" for t in transactions])
+
+        # shows the fetched transaction in message box
+        QMessageBox.information(self, "View Transactions", transaction_list)
 
     def filter_transactions_ui(self):
         QMessageBox.information(self, "Filter Transactions by Type", "Placeholder")
