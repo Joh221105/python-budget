@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit, QTableWidget, QTableWidgetItem, QLabel
 from database import create_connection, create_table
 from transactions import (
     add_transaction,
@@ -23,7 +23,7 @@ class BudgetTrackerApp(QMainWindow):
 
         # create buttons for menu display
         self.add_transaction_button = QPushButton("Add Transaction")
-        self.view_transactions_button = QPushButton("View Transactions")
+        self.view_transactions_button = QPushButton("View All Transactions")
         self.filter_by_type_button = QPushButton("Filter by Type")
         self.filter_by_date_button = QPushButton("Filter by Date Range")
         self.delete_transaction_button = QPushButton("Delete Transaction")
@@ -101,6 +101,7 @@ class BudgetTrackerApp(QMainWindow):
 
         dialog.setGeometry(100, 100, 1000, 500) # sets initial size of transactions table
         
+        # creates table to display transactions
         table = QTableWidget(dialog)
         table.setColumnCount(6)  #  designates number of columns
         table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"]) # column names
@@ -120,8 +121,68 @@ class BudgetTrackerApp(QMainWindow):
         
         dialog.exec_()
 
+# -------------------------------FILTER TRANSACTIONS BY TYPE ----------------------------------------------------
+
     def filter_transactions_ui(self):
-        QMessageBox.information(self, "Filter Transactions by Type", "Placeholder")
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Filter Transactions by Type")
+
+        layout = QVBoxLayout()
+
+        # Label and Input field for transaction type
+        label = QLabel("Enter transaction type (income/expense):", dialog)
+        layout.addWidget(label)
+
+        type_input = QLineEdit(dialog)
+        layout.addWidget(type_input)
+
+        # creates button to submit input
+        submit_button = QPushButton("Submit", dialog)
+        layout.addWidget(submit_button)
+
+        submit_button.clicked.connect(lambda: self.show_filtered_transactions(type_input.text().lower(), dialog))
+
+        dialog.setLayout(layout)
+        dialog.exec_()
+
+    def show_filtered_transactions(self, transaction_type, parent_dialog):
+        # validates input
+        if transaction_type not in ['income', 'expense']:
+            QMessageBox.warning(self, "Invalid Input", "Please enter 'income' or 'expense'.")
+            return
+
+        # retrieves filtered transactions from the database
+        filtered_transactions = filter_transactions_by_type(self.conn, transaction_type)
+
+        parent_dialog.close()
+
+        # creates a new dialog to display filtered transactions
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Filtered Transactions - {transaction_type.capitalize()}")
+
+        dialog.resize(800, 400)
+
+        # creates table to display transactions
+        table = QTableWidget(dialog)
+        table.setColumnCount(6) 
+        table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
+        table.setRowCount(len(filtered_transactions))
+
+        # populates table with filtered results
+        for row, transaction in enumerate(filtered_transactions):
+            for column, value in enumerate(transaction):
+                table.setItem(row, column, QTableWidgetItem(str(value)))
+
+        # sets notes column width
+        table.setColumnWidth(5, 400)
+
+        layout = QVBoxLayout()
+        layout.addWidget(table)
+        dialog.setLayout(layout)
+
+        dialog.exec_()
+
+# --------------------------FILTER TRANSACTIONS BY DATE RANGE -------------------------------------
 
     def filter_transactions_by_date_range_ui(self):
         QMessageBox.information(self, "Filter Transactions by Date Range", "Placeholder")
