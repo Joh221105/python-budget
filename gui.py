@@ -1,10 +1,25 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit
+from database import create_connection, create_table
+from transactions import (
+    add_transaction,
+    get_transactions,
+    filter_transactions_by_type,
+    filter_transactions_by_date_range,
+    delete_transaction_by_id,
+    update_transaction,
+    get_transaction_by_id,
+    export_to_csv,
+)
 
 class BudgetTrackerApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Budget Tracker")
+
+         # Initialize the database connection
+        self.conn = create_connection("budget_tracker.db")
+        create_table(self.conn)  # Make sure the table is created
 
         # create buttons for menu display
         self.add_transaction_button = QPushButton("Add Transaction")
@@ -42,7 +57,37 @@ class BudgetTrackerApp(QMainWindow):
         self.setCentralWidget(container)
 
     def add_transaction_ui(self):
-        QMessageBox.information(self, "Add Transaction", "Placeholder")
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Add Transaction")
+
+        layout = QFormLayout(dialog)
+
+        type_input = QLineEdit(dialog)
+        category_input = QLineEdit(dialog)
+        amount_input = QLineEdit(dialog)
+        date_input = QLineEdit(dialog)
+        notes_input = QLineEdit(dialog)
+
+        layout.addRow("Type (income/expense):", type_input)
+        layout.addRow("Category:", category_input)
+        layout.addRow("Amount:", amount_input)
+        layout.addRow("Date (YYYY-MM-DD):", date_input)
+        layout.addRow("Notes: ", notes_input)
+
+        button = QPushButton("Add Transaction", dialog)
+        layout.addWidget(button)
+
+        button.clicked.connect(lambda: self.submit_add_transaction(
+            type_input.text(), category_input.text(),
+            float(amount_input.text()), date_input.text(), notes_input.text(), dialog))
+
+        dialog.exec_()
+
+    def submit_add_transaction(self, transaction_type, category, amount, date, notes, dialog):
+        transaction = (transaction_type, category, amount, date, notes)
+        transaction_id = add_transaction(self.conn, transaction)
+        QMessageBox.information(self, "Transaction Added!", f"Transaction ID: {transaction_id}")
+        dialog.accept()
 
     def view_transactions_ui(self):
         QMessageBox.information(self, "View Transactions", "Placeholder")
