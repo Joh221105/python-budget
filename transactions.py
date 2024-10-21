@@ -72,3 +72,17 @@ def export_to_csv(conn, filename):
             writer.writerow(transaction)
 
     print(f"Transactions exported to {filename} successfully.")
+
+
+def summarize_transactions(conn, start_date, end_date):
+    cur = conn.cursor()
+    
+    # calculates total income
+    cur.execute("SELECT SUM(amount) FROM transactions WHERE type = 'income' AND date BETWEEN ? AND ?", (start_date, end_date))
+    total_income = cur.fetchone()[0] or 0  # default to 0 if no income
+    
+    # calculates total expenses
+    cur.execute("SELECT SUM(amount) FROM transactions WHERE type = 'expense' AND date BETWEEN ? AND ?", (start_date, end_date))
+    total_expenses = cur.fetchone()[0] or 0
+
+    return total_income, total_expenses

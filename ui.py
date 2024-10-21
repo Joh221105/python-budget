@@ -1,5 +1,8 @@
 from database import create_connection, create_table
-from transactions import add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, delete_transaction_by_id, update_transaction, get_transaction_by_id, export_to_csv
+from transactions import (
+    add_transaction, get_transactions, filter_transactions_by_type, filter_transactions_by_date_range, 
+    delete_transaction_by_id, update_transaction, get_transaction_by_id, export_to_csv,
+    summarize_transactions)
 
 def display_menu():
     print("\n--- Budget Tracker ---")
@@ -10,7 +13,8 @@ def display_menu():
     print("5. Delete Transaction")
     print("6. Edit Transaction")
     print("7. Export Transactions to CSV")
-    print("8. Exit")
+    print("8. View Summary Statistics")
+    print("9. Exit")
 
 def add_transaction_ui(conn):
     print("\n--- Add New Transaction ---")
@@ -116,6 +120,17 @@ def export_transactions_ui(conn):
     filename = input("Enter the filename (e.g., transactions.csv): ")
     export_to_csv(conn, filename)
 
+def summary_statistics_ui(conn):
+    print("\n--- Summary Statistics ---")
+    start_date = input("Enter start date (YYYY-MM-DD): ")
+    end_date = input("Enter end date (YYYY-MM-DD): ")
+    
+    total_income, total_expenses = summarize_transactions(conn, start_date, end_date)
+
+    print(f"\nSummary from {start_date} to {end_date}:")
+    print(f"Total Income: ${total_income:.2f}")
+    print(f"Total Expenses: ${total_expenses:.2f}")
+
 def main():
     database = "budget_tracker.db"
     conn = create_connection(database)
@@ -128,7 +143,7 @@ def main():
 
     while True:
         display_menu()
-        choice = input("\nChoose an option (1, 2, 3, 4, 5, 6, 7, or 8): ")
+        choice = input("\nChoose an option (1, 2, 3, 4, 5, 6, 7, 8, or 9): ")
 
         if choice == '1':
             add_transaction_ui(conn)
@@ -145,6 +160,8 @@ def main():
         elif choice == '7':
             export_transactions_ui(conn)
         elif choice == '8':
+            summary_statistics_ui(conn)
+        elif choice == '9':
             print("\nExiting the application.")
             break
         else:
