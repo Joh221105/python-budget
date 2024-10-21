@@ -259,39 +259,32 @@ class BudgetTrackerApp(QMainWindow):
         dialog.setLayout(layout)
 
         dialog.exec_()
-
-# ---
-# dialog = QDialog(self)
-#         dialog.setWindowTitle(f"Filtered Transactions - {transaction_type.capitalize()}")
-
-#         dialog.resize(800, 400)
-
-#         # creates table to display transactions
-#         table = QTableWidget(dialog)
-#         table.setColumnCount(6) 
-#         table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
-#         table.setRowCount(len(filtered_transactions))
-
-#         # populates table with filtered results
-#         for row, transaction in enumerate(filtered_transactions):
-#             for column, value in enumerate(transaction):
-#                 table.setItem(row, column, QTableWidgetItem(str(value)))
-
-#         # sets notes column width
-#         table.setColumnWidth(5, 400)
-
-#         layout = QVBoxLayout()
-#         layout.addWidget(table)
-#         dialog.setLayout(layout)
-
-#         dialog.exec_()
-
             
-
 # --------------------------------------- DELETE TRANSACTION BY ID --------------------------------------------
     def delete_transaction_ui(self):
-        QMessageBox.information(self, "Delete Transaction", "Placeholder")
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Delete Transaction")
 
+        # creates label and input field for transaction ID
+        transaction_id_label = QLabel("Enter Transaction ID to Delete:")
+        transaction_id_input = QLineEdit()
+
+        # creates submit button
+        submit_button = QPushButton("Delete")
+
+        # lays out the display of the widgets
+        layout = QFormLayout()
+        layout.addRow(transaction_id_label, transaction_id_input)
+        layout.addWidget(submit_button)
+        dialog.setLayout(layout)
+
+        # connects submit button to delete function
+        submit_button.clicked.connect(lambda: self.delete_transaction(transaction_id_input.text(), dialog))
+
+        dialog.exec_()
+
+    def delete_transaction(id, parent_dialog):
+        parent_dialog.close()
 # --------------------------------------- EDIT TRANSACTION BY ID ------------------------------------------------
     def edit_transaction_ui(self):
         QMessageBox.information(self, "Edit Transaction", "Placeholder")
