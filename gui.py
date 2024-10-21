@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit, QTableWidget, QTableWidgetItem
 from database import create_connection, create_table
 from transactions import (
     add_transaction,
@@ -96,15 +96,27 @@ class BudgetTrackerApp(QMainWindow):
     def view_transactions_ui(self):
         transactions = get_transactions(self.conn)  
 
-        if not transactions:
-            QMessageBox.information(self, "View Transactions", "No transactions found.")
-            return
+        dialog = QDialog(self)
+        dialog.setWindowTitle("All Transactions")
+        
+        table = QTableWidget(dialog)
+        table.setColumnCount(6)  #  designates number of columns
+        table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"]) # column names
+        table.setColumnWidth(5, 300) # sets the 6th column - Notes to be 300 pixels
+        
+        # set the number of rows in the table to number of transactions
+        table.setRowCount(len(transactions))
 
-        # formatted string display of transactions
-        transaction_list = "\n".join([f"ID: {t[0]}, Type: {t[1]}, Category: {t[2]}, Amount: {t[3]}, Date: {t[4]}, Notes: {t[5]}" for t in transactions])
+        # populate table with data
+        for row, transaction in enumerate(transactions):
+            for column, value in enumerate(transaction):
+                table.setItem(row, column, QTableWidgetItem(str(value)))  # values needs to be converted to strings to be displayed
 
-        # shows the fetched transaction in message box
-        QMessageBox.information(self, "View Transactions", transaction_list)
+        layout = QVBoxLayout()
+        layout.addWidget(table)
+        dialog.setLayout(layout)
+        
+        dialog.exec_()
 
     def filter_transactions_ui(self):
         QMessageBox.information(self, "Filter Transactions by Type", "Placeholder")
