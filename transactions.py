@@ -88,3 +88,8 @@ def summarize_transactions(conn, start_date, end_date):
     net_balance= total_income - total_expenses
 
     return total_income, total_expenses, net_balance
+
+def search_transactions_by_notes(conn, keyword):
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM transactions WHERE notes LIKE ?", ('%' + keyword + '%',))
+    return cursor.fetchall()
