@@ -32,6 +32,7 @@ class BudgetTrackerApp(QMainWindow):
         self.edit_transaction_button = QPushButton("Edit Transaction")
         self.export_button = QPushButton("Export to CSV")
         self.search_transactions_button = QPushButton("Search By Notes")
+        self.summarize_transactions_button = QPushButton("Summarize Transactions")
         self.exit_button = QPushButton("Exit")
 
         # connects button to respective functions
@@ -43,6 +44,7 @@ class BudgetTrackerApp(QMainWindow):
         self.edit_transaction_button.clicked.connect(self.edit_transaction_ui)
         self.export_button.clicked.connect(self.export_transactions_ui)
         self.search_transactions_button.clicked.connect(self.search_transactions_ui)
+        self.summarize_transactions_button.clicked.connect(self.summarize_transactions_ui)
         self.exit_button.clicked.connect(self.close)
 
         # layout of buttons
@@ -55,6 +57,7 @@ class BudgetTrackerApp(QMainWindow):
         layout.addWidget(self.edit_transaction_button)
         layout.addWidget(self.export_button)
         layout.addWidget(self.search_transactions_button)
+        layout.addWidget(self.summarize_transactions_button)
         layout.addWidget(self.exit_button)
 
         container = QWidget()
