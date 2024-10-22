@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit, QTableWidget, QTableWidgetItem, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit, QTableWidget, QTableWidgetItem, QLabel, QFileDialog
 from database import create_connection, create_table
 from datetime import datetime
 from transactions import (
@@ -12,6 +12,7 @@ from transactions import (
     get_transaction_by_id,
     export_to_csv,
 )
+import csv
 
 class BudgetTrackerApp(QMainWindow):
     def __init__(self):
@@ -390,7 +391,19 @@ class BudgetTrackerApp(QMainWindow):
 
 # --------------------------------------- EXPORT TRANSACTIONS TO CSV ---------------------------------------------
     def export_transactions_ui(self):
-        QMessageBox.information(self, "Export Transactions", "Placeholder")
+        options = QFileDialog.Options()
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options)
+
+        if not file_name:
+            return  # user cancelled save
+
+        try:
+            export_to_csv(self.conn, file_name)
+            
+            QMessageBox.information(self, "Success", f"Transactions exported to {file_name} successfully.")
+
+        except Exception as e:
+            QMessageBox.warning(self, "Export Failed", f"An error occurred while exporting transactions: {str(e)}")
 
 
 # --------------------------------------- SUMMARIZE TRANSACTIONS -------------------------------------------
