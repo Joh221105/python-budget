@@ -11,7 +11,8 @@ from transactions import (
     update_transaction,
     get_transaction_by_id,
     export_to_csv,
-    search_transactions_by_notes
+    search_transactions_by_notes,
+    summarize_transactions
 )
 
 class BudgetTrackerApp(QMainWindow):
@@ -31,7 +32,8 @@ class BudgetTrackerApp(QMainWindow):
         self.delete_transaction_button = QPushButton("Delete Transaction")
         self.edit_transaction_button = QPushButton("Edit Transaction")
         self.export_button = QPushButton("Export to CSV")
-        self.search_transactions_button = QPushButton("Search Transactions")
+        self.search_transactions_button = QPushButton("Search By Notes")
+        self.summarize_transactions_button = QPushButton("Summarize Transactions")
         self.exit_button = QPushButton("Exit")
 
         # connects button to respective functions
@@ -43,6 +45,7 @@ class BudgetTrackerApp(QMainWindow):
         self.edit_transaction_button.clicked.connect(self.edit_transaction_ui)
         self.export_button.clicked.connect(self.export_transactions_ui)
         self.search_transactions_button.clicked.connect(self.search_transactions_ui)
+        self.summarize_transactions_button.clicked.connect(self.summarize_transactions_ui)
         self.exit_button.clicked.connect(self.close)
 
         # layout of buttons
@@ -55,6 +58,7 @@ class BudgetTrackerApp(QMainWindow):
         layout.addWidget(self.edit_transaction_button)
         layout.addWidget(self.export_button)
         layout.addWidget(self.search_transactions_button)
+        layout.addWidget(self.summarize_transactions_button)
         layout.addWidget(self.exit_button)
 
         container = QWidget()
@@ -484,6 +488,51 @@ class BudgetTrackerApp(QMainWindow):
         table_dialog.setFixedSize(800, 600)
         table_dialog.exec_()
 # --------------------------------------- SUMMARIZE TRANSACTIONS -------------------------------------------
+
+    def summarize_transactions_ui(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Summarize Transactions")
+
+        start_date_label = QLabel("Start Date (YYYY-MM-DD):")
+        start_date_input = QLineEdit()
+
+        end_date_label = QLabel("End Date (YYYY-MM-DD):")
+        end_date_input = QLineEdit()
+
+        submit_button = QPushButton("Summarize")
+
+        layout = QFormLayout()
+        layout.addRow(start_date_label, start_date_input)
+        layout.addRow(end_date_label, end_date_input)
+        layout.addWidget(submit_button)
+
+        dialog.setLayout(layout)
+
+        submit_button.clicked.connect(lambda: self.show_summary(start_date_input.text(), end_date_input.text(), dialog))
+
+        dialog.exec_()
+    
+
+    def show_summary(self, start_date, end_date, parent_dialog):
+        parent_dialog.close()
+
+        # date validation
+        try:
+            start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Date Format", "Please enter the date in YYYY-MM-DD format.")
+            return
+
+        total_income, total_expenses, net_balance = summarize_transactions(self.conn, start_date, end_date)
+
+        # summary in message box
+        summary_message = f"{start_date} to {end_date}:\n\n" \
+                        f"Total Income: ${total_income}\n" \
+                        f"Total Expenses: ${total_expenses}\n" \
+                        f"Net Balance: ${net_balance}"
+
+        QMessageBox.information(self, "Transaction Summary", summary_message)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
