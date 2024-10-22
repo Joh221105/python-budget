@@ -31,6 +31,7 @@ class BudgetTrackerApp(QMainWindow):
         self.delete_transaction_button = QPushButton("Delete Transaction")
         self.edit_transaction_button = QPushButton("Edit Transaction")
         self.export_button = QPushButton("Export to CSV")
+        self.search_transactions_button = QPushButton("Search Transactions")
         self.exit_button = QPushButton("Exit")
 
         # connects button to respective functions
@@ -41,6 +42,7 @@ class BudgetTrackerApp(QMainWindow):
         self.delete_transaction_button.clicked.connect(self.delete_transaction_ui)
         self.edit_transaction_button.clicked.connect(self.edit_transaction_ui)
         self.export_button.clicked.connect(self.export_transactions_ui)
+        self.search_transactions_button.clicked.connect(self.search_transactions_ui)
         self.exit_button.clicked.connect(self.close)
 
         # layout of buttons
@@ -52,6 +54,7 @@ class BudgetTrackerApp(QMainWindow):
         layout.addWidget(self.delete_transaction_button)
         layout.addWidget(self.edit_transaction_button)
         layout.addWidget(self.export_button)
+        layout.addWidget(self.search_transactions_button)
         layout.addWidget(self.exit_button)
 
         container = QWidget()
@@ -462,7 +465,24 @@ class BudgetTrackerApp(QMainWindow):
         self.display_transactions(transactions)
     
     def display_transactions(self, transactions):
-        pass
+        table = QTableWidget()
+        table.setColumnCount(6)
+        table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
+        table.setRowCount(len(transactions))
+
+        for row, transaction in enumerate(transactions):
+            for column, value in enumerate(transaction):
+                table.setItem(row, column, QTableWidgetItem(str(value)))
+
+        table.resizeColumnsToContents()
+
+        table_dialog = QDialog(self)
+        table_dialog.setWindowTitle("Search Results")
+        layout = QVBoxLayout()
+        layout.addWidget(table)
+        table_dialog.setLayout(layout)
+        table_dialog.setFixedSize(800, 600)
+        table_dialog.exec_()
 # --------------------------------------- SUMMARIZE TRANSACTIONS -------------------------------------------
 
 if __name__ == "__main__":
