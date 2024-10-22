@@ -31,7 +31,7 @@ class BudgetTrackerApp(QMainWindow):
         self.delete_transaction_button = QPushButton("Delete Transaction")
         self.edit_transaction_button = QPushButton("Edit Transaction")
         self.export_button = QPushButton("Export to CSV")
-        self.search_transactions_button = QPushButton("Search Transactions")
+        self.search_transactions_button = QPushButton("Search By Notes")
         self.exit_button = QPushButton("Exit")
 
         # connects button to respective functions
@@ -484,6 +484,32 @@ class BudgetTrackerApp(QMainWindow):
         table_dialog.setFixedSize(800, 600)
         table_dialog.exec_()
 # --------------------------------------- SUMMARIZE TRANSACTIONS -------------------------------------------
+
+    def summarize_transactions_ui(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Summarize Transactions")
+
+        start_date_label = QLabel("Start Date (YYYY-MM-DD):")
+        start_date_input = QLineEdit()
+
+        end_date_label = QLabel("End Date (YYYY-MM-DD):")
+        end_date_input = QLineEdit()
+
+        submit_button = QPushButton("Summarize")
+
+        layout = QFormLayout()
+        layout.addRow(start_date_label, start_date_input)
+        layout.addRow(end_date_label, end_date_input)
+        layout.addWidget(submit_button)
+
+        dialog.setLayout(layout)
+
+        submit_button.clicked.connect(lambda: self.show_summary(start_date_input.text(), end_date_input.text(), dialog))
+
+        dialog.exec_()
+    
+    def show_summary(self, start_date, end_date, parent_dialog):
+        pass
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
