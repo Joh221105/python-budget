@@ -75,20 +75,40 @@ class BudgetTrackerApp(QMainWindow):
         layout.addRow("Category:", category_input)
         layout.addRow("Amount:", amount_input)
         layout.addRow("Date (YYYY-MM-DD):", date_input)
-        layout.addRow("Notes: ", notes_input)
+        layout.addRow("Notes:", notes_input)
 
         button = QPushButton("Add Transaction", dialog)
         layout.addWidget(button)
 
         button.clicked.connect(lambda: self.submit_add_transaction(
-            type_input.text(), category_input.text(),
-            float(amount_input.text()), date_input.text(), notes_input.text(), dialog))
+        type_input.text(), category_input.text(),
+        amount_input.text(), date_input.text(), notes_input.text(), dialog))
 
         dialog.exec_()
 
-    def submit_add_transaction(self, transaction_type, category, amount, date, notes, dialog):
+    def submit_add_transaction(self, transaction_type, category, amount_str, date, notes, dialog):
+        # validate the required fields (everything but notes)
+        if not transaction_type or not category or not amount_str or not date:
+            QMessageBox.warning(self, "Input Error", "Please fill in all required fields (Type, Category, Amount, Date).")
+            return
+
+        # validates and convert amount to float
+        try:
+            amount = float(amount_str)
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Amount", "Please enter a valid numerical amount.")
+            return
+
+        # validates date format
+        try:
+            datetime.strptime(date, "%Y-%m-%d")
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Date", "Please enter a valid date in YYYY-MM-DD format.")
+            return
+
         transaction = (transaction_type, category, amount, date, notes)
         transaction_id = add_transaction(self.conn, transaction)
+
         QMessageBox.information(self, "Transaction Added!", f"Transaction Added. Transaction ID: {transaction_id}")
         dialog.accept()
 
