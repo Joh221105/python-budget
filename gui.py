@@ -11,7 +11,8 @@ from transactions import (
     update_transaction,
     get_transaction_by_id,
     export_to_csv,
-    search_transactions_by_notes
+    search_transactions_by_notes,
+    summarize_transactions
 )
 
 class BudgetTrackerApp(QMainWindow):
@@ -511,8 +512,27 @@ class BudgetTrackerApp(QMainWindow):
 
         dialog.exec_()
     
+
     def show_summary(self, start_date, end_date, parent_dialog):
-        pass
+        parent_dialog.close()
+
+        # date validation
+        try:
+            start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+        except ValueError:
+            QMessageBox.warning(self, "Invalid Date Format", "Please enter the date in YYYY-MM-DD format.")
+            return
+
+        total_income, total_expenses, net_balance = summarize_transactions(self.conn, start_date, end_date)
+
+        # summary in message box
+        summary_message = f"{start_date} to {end_date}:\n\n" \
+                        f"Total Income: ${total_income}\n" \
+                        f"Total Expenses: ${total_expenses}\n" \
+                        f"Net Balance: ${net_balance}"
+
+        QMessageBox.information(self, "Transaction Summary", summary_message)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
