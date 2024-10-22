@@ -12,7 +12,6 @@ from transactions import (
     get_transaction_by_id,
     export_to_csv,
 )
-import csv
 
 class BudgetTrackerApp(QMainWindow):
     def __init__(self):
@@ -111,6 +110,7 @@ class BudgetTrackerApp(QMainWindow):
         
         # set the number of rows in the table to number of transactions
         table.setRowCount(len(transactions))
+        table.setSortingEnabled(True)
 
         # populate table with data
         for row, transaction in enumerate(transactions):
@@ -169,6 +169,8 @@ class BudgetTrackerApp(QMainWindow):
         table.setColumnCount(6) 
         table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
         table.setRowCount(len(filtered_transactions))
+
+        table.setSortingEnabled(True)
 
         # populates table with filtered results
         for row, transaction in enumerate(filtered_transactions):
@@ -248,6 +250,7 @@ class BudgetTrackerApp(QMainWindow):
         table.setColumnCount(6)
         table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
         table.setRowCount(len(transactions))
+        table.setSortingEnabled(True)
 
         for row, transaction in enumerate(transactions):
             for column, value in enumerate(transaction):
