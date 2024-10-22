@@ -429,6 +429,29 @@ class BudgetTrackerApp(QMainWindow):
             QMessageBox.warning(self, "Export Failed", f"An error occurred while exporting transactions: {str(e)}")
 
 
+# --------------------------------------- FILTER TRANSACTION BY NOTES --------------------------------------
+
+def search_transactions_ui(self):
+    dialog = QDialog(self)
+    dialog.setWindowTitle("Search Transactions by Notes")
+
+    layout = QFormLayout(dialog)
+
+    # Input field for search query
+    search_input = QLineEdit(dialog)
+    layout.addRow("Enter keywords in Notes:", search_input)
+
+    search_button = QPushButton("Search", dialog)
+    layout.addWidget(search_button)
+
+    # Connect the button to the search function
+    search_button.clicked.connect(lambda: self.search_transactions(search_input.text(), dialog))
+
+    dialog.setLayout(layout)
+    dialog.exec_()
+
+def search_transactions(self, keyword, parent_dialog):
+    pass
 # --------------------------------------- SUMMARIZE TRANSACTIONS -------------------------------------------
 
 if __name__ == "__main__":
