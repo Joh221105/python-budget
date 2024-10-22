@@ -11,6 +11,7 @@ from transactions import (
     update_transaction,
     get_transaction_by_id,
     export_to_csv,
+    search_transactions_by_notes
 )
 
 class BudgetTrackerApp(QMainWindow):
@@ -30,6 +31,7 @@ class BudgetTrackerApp(QMainWindow):
         self.delete_transaction_button = QPushButton("Delete Transaction")
         self.edit_transaction_button = QPushButton("Edit Transaction")
         self.export_button = QPushButton("Export to CSV")
+        self.search_transactions_button = QPushButton("Search Transactions")
         self.exit_button = QPushButton("Exit")
 
         # connects button to respective functions
@@ -40,6 +42,7 @@ class BudgetTrackerApp(QMainWindow):
         self.delete_transaction_button.clicked.connect(self.delete_transaction_ui)
         self.edit_transaction_button.clicked.connect(self.edit_transaction_ui)
         self.export_button.clicked.connect(self.export_transactions_ui)
+        self.search_transactions_button.clicked.connect(self.search_transactions_ui)
         self.exit_button.clicked.connect(self.close)
 
         # layout of buttons
@@ -51,6 +54,7 @@ class BudgetTrackerApp(QMainWindow):
         layout.addWidget(self.delete_transaction_button)
         layout.addWidget(self.edit_transaction_button)
         layout.addWidget(self.export_button)
+        layout.addWidget(self.search_transactions_button)
         layout.addWidget(self.exit_button)
 
         container = QWidget()
@@ -429,6 +433,56 @@ class BudgetTrackerApp(QMainWindow):
             QMessageBox.warning(self, "Export Failed", f"An error occurred while exporting transactions: {str(e)}")
 
 
+# --------------------------------------- FILTER TRANSACTION BY NOTES --------------------------------------
+
+    def search_transactions_ui(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Search Transactions by Notes")
+
+        layout = QFormLayout(dialog)
+
+        # Input field for search query
+        search_input = QLineEdit(dialog)
+        layout.addRow("Enter keywords in Notes:", search_input)
+
+        search_button = QPushButton("Search", dialog)
+        layout.addWidget(search_button)
+
+        # Connect the button to the search function
+        search_button.clicked.connect(lambda: self.search_transactions(search_input.text(), dialog))
+
+        dialog.setLayout(layout)
+        dialog.exec_()
+
+    def search_transactions(self, keyword, parent_dialog):
+    
+        parent_dialog.close()
+
+        # fetch transactions that contain the keyword in the notes
+        transactions = search_transactions_by_notes(self.conn, keyword)
+
+        # display the results in a table by calling display_transactions
+        self.display_transactions(transactions)
+    
+    def display_transactions(self, transactions):
+        table = QTableWidget()
+        table.setColumnCount(6)
+        table.setHorizontalHeaderLabels(["ID", "Type", "Category", "Amount", "Date", "Notes"])
+        table.setRowCount(len(transactions))
+
+        for row, transaction in enumerate(transactions):
+            for column, value in enumerate(transaction):
+                table.setItem(row, column, QTableWidgetItem(str(value)))
+
+        table.resizeColumnsToContents()
+
+        table_dialog = QDialog(self)
+        table_dialog.setWindowTitle("Search Results")
+        layout = QVBoxLayout()
+        layout.addWidget(table)
+        table_dialog.setLayout(layout)
+        table_dialog.setFixedSize(800, 600)
+        table_dialog.exec_()
 # --------------------------------------- SUMMARIZE TRANSACTIONS -------------------------------------------
 
 if __name__ == "__main__":
